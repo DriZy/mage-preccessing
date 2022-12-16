@@ -1,0 +1,27 @@
+{
+  "name": "image-processing",
+  "version": "1.0.0",
+  "description": "An API to process image with nodeJs and typescript support",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DriZy/mage-preccessing.git"
+  },
+  "keywords": [
+    "typescript",
+    "node",
+    "image",
+    "png",
+    "jpeg",
+    "jpg"
+  ],
+  "author": "Tabi Idris",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DriZy/mage-preccessing/issues"
+  },
+  "homepage": "https://github.com/DriZy/mage-preccessing#readme"
+}
