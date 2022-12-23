@@ -21,19 +21,19 @@ const resizeImage = async (links: string | string[], outputDir: string, inputDir
              }
             }
         }
-        else {
-            if (typeof links === 'string'){
-                const  extension = path.extname(links)
-                const  fileName = path.basename(links, extension)
-
-                for (const size of sizes) {
-                    console.log(size)
-                    const image = await sharp(links).resize(size);
-                    await fsPromises.writeFile(`${outputDir}/${fileName}_${size.width}_${size.height}_pixels.${extension}`, image);
-                    console.log(`${fileName}_${size.width}_${size.height}_pixels.${extension} created successfully`);
-                }
-            }
-        }
+        // else {
+        //     if (typeof links === 'string'){
+        //         const  extension = path.extname(links)
+        //         const  fileName = path.basename(links, extension)
+        //
+        //         for (const size of sizes) {
+        //             console.log(size)
+        //             const image = await sharp(links).resize(size);
+        //             await fsPromises.writeFile(`${outputDir}/${fileName}_${size.width}_${size.height}_pixels.${extension}`, image);
+        //             console.log(`${fileName}_${size.width}_${size.height}_pixels.${extension} created successfully`);
+        //         }
+        //     }
+        // }
     }catch (error){
         console.log(error)
     }

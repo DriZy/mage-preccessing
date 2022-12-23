@@ -1,4 +1,4 @@
-import resize from '../../utilities/resize';
+import resize from '../../controllers/resize';
 import path from "path";
 
 describe('Tests for image resizing', () => {
