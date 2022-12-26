@@ -19,3 +19,7 @@ An API for image processing with nodeJs and typescript support. It takes images 
 - Build a frontend to upload and view images 
 - Add image compression
 - More test cases
+
+## Note
+- The route ``/api/resize`` accepts a string or array of paths to image/images and the path to the output directory. Resizes the images to sizes of a predefined array of sizes.
+- The route ``/api/resize?filename=${filename}&width=${width}&height=${height}`` resizes image to specified width and height. Filename here is the path to the image. Output directory is `/src/assets/processed`
