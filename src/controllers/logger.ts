@@ -9,7 +9,11 @@ import fs from 'fs';
  * @param res Server response
  * */
 
-const logger = async (req:express.Request, res:express.Response, next: Function): Promise<void> => {
+const logger = async (
+  req: express.Request,
+  res: express.Response,
+  next: Function
+): Promise<void> => {
   //check if output directory exist already
   const logsDirectory = path.resolve('route-logs');
   if (!fs.existsSync(logsDirectory)) {
@@ -24,10 +28,10 @@ const logger = async (req:express.Request, res:express.Response, next: Function)
   const file = await fsPromises.open(`${logsDirectory}/${date}.log`, 'a+');
   try {
     await file.write(`${date_ob}: ${req.url} \n`);
-    await file.close()
+    await file.close();
   } catch (e: unknown) {
     await file.write(`${date_ob}: ${e} \n`);
-    await file.close()
+    await file.close();
   }
   next();
 };

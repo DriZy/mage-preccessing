@@ -13,7 +13,7 @@ const resizeImageWithQuery = async (
   filename: string,
   width: number,
   height: number
-)  => {
+): Promise<string | unknown> => {
   try {
     //get base url
     const baseUrl: string = path.resolve('src');
@@ -40,7 +40,7 @@ const resizeImageWithQuery = async (
     //check filename and absolute file path
     else if (!filename || !fs.existsSync(filePath)) {
       console.log('Error! Invalid filename! Path to file not available ');
-      return 'Error! Invalid filename! Path to file not available '
+      return 'Error! Invalid filename! Path to file not available ';
     }
     //check if file width same width and height has been processed before
     else if (
@@ -52,11 +52,7 @@ const resizeImageWithQuery = async (
         `${outputDir}/${name}_${width}_${height}_pixels${extension} already exist`
       );
 
-      return {
-        filename,
-        width,
-        height
-      };
+      return `${outputDir}/${name}_${width}_${height}_pixels${extension}`;
     }
     //process single file/image
     else if (
@@ -78,11 +74,7 @@ const resizeImageWithQuery = async (
       console.log(
         `${name}_${width}_${height}_pixels${extension} created successfully`
       );
-      return {
-        filename,
-        width,
-        height
-      };
+      return `${outputDir}/${name}_${width}_${height}_pixels${extension}`;
     } else {
       console.log('Error! An error occurred! Please try again');
       return 'Error! An error occurred! Please try again';
