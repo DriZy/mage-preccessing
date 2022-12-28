@@ -5,19 +5,13 @@ import fs from 'fs';
 
 /**
  * Application logger for all system event
- * @param req
- * @param res
+ * @param req Request made to server
+ * @param res Server response
  * */
 
-interface LoggerProps {
-  req: express.Request;
-  res: express.Response;
-  next: () => void;
-}
-const logger = async ({ req, res, next }: LoggerProps): Promise<void> => {
+const logger = async (req:express.Request, res:express.Response, next: Function): Promise<void> => {
   //check if output directory exist already
-  const baseUrl = path.resolve('src');
-  const logsDirectory = path.resolve(baseUrl, 'route-logs');
+  const logsDirectory = path.resolve('route-logs');
   if (!fs.existsSync(logsDirectory)) {
     fs.mkdirSync(logsDirectory);
   }
@@ -30,8 +24,10 @@ const logger = async ({ req, res, next }: LoggerProps): Promise<void> => {
   const file = await fsPromises.open(`${logsDirectory}/${date}.log`, 'a+');
   try {
     await file.write(`${date_ob}: ${req.url} \n`);
+    await file.close()
   } catch (e: unknown) {
     await file.write(`${date_ob}: ${e} \n`);
+    await file.close()
   }
   next();
 };

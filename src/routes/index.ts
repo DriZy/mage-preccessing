@@ -3,11 +3,10 @@ import resize from '../controllers/resize';
 
 const routes = express.Router();
 
-routes.use('/api', (req, res) => {
+routes.get('/api', (req:express.Request, res:express.Response): void => {
   res.send('Image processing api router initialized');
 });
-routes.use(`/api/resize`, async (req, res) => {
-  console.log(req);
+routes.get(`/api/resize`, async (req:express.Request, res:express.Response) => {
   const filename: string = req.query.filename as string;
   const width: number = parseInt(<string>req.query.width);
   const height: number = parseInt(<string>req.query.height);
@@ -17,10 +16,10 @@ routes.use(`/api/resize`, async (req, res) => {
     !!req.query.width &&
     !!req.query.height
   ) {
-    await resize.resizeImageWithQuery(filename, width, height);
-    res.send(req);
+    const response = await resize.resizeImageWithQuery(filename, width, height);
+    res.send( response );
   } else {
-    console.log('Error! Missing filename, height or width');
+    res.send('Error! Missing filename, height or width');
   }
 });
 
