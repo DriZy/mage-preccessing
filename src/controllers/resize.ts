@@ -1,9 +1,7 @@
 import sharp from 'sharp';
-import {promises as fsPromises} from 'fs';
-import * as fs from "fs";
-import path from "path";
-import express from "express";
-import * as url from "url";
+import { promises as fsPromises } from 'fs';
+import * as fs from 'fs';
+import path from 'path';
 
 /**
  * Risize images of format jpg, png and jpeg to a specified array of sizes
@@ -30,93 +28,144 @@ import * as url from "url";
 //         console.log(res.errored)
 //     }
 // };
-const resizeImageWithParams = async (links: string | string[], outputDir: string) => {
-    try {
-        const sizes: { width: number, height: number }[] = [{width: 150, height: 150}, {
-            width: 250,
-            height: 250
-        }, {width: 300, height: 300}, {width: 600, height: 600}, {width: 1024, height: 1024}]
-        //check if output directory exist already
-        if (!fs.existsSync(outputDir)) {
-            fs.mkdirSync(outputDir);
-        }
-        //process array of files/images
-        if ((typeof links !== 'string') && (links.length > 0)) {
-            for (let i = 0; i < links.length; i++) {
-                const extension = path.extname(links[i])
-                const fileName = path.basename(links[i], extension)
-                for (const size of sizes) {
-                    const image = await sharp(links[i]).resize(size.width, size.height, {
-                        kernel: sharp.kernel.nearest,
-                        fit: 'cover',
-                        position: 'center',
-                        background: {r: 255, g: 255, b: 255, alpha: 0.5}
-                    });
-                    await fsPromises.writeFile(`${outputDir}/${fileName}_${size.width}_${size.height}_pixels${extension}`, image);
-                    console.log(`${fileName}_${size.width}_${size.height}_pixels${extension} created successfully`);
-                }
-            }
-        } else {
-            //process single file/image
-            if (typeof links === 'string') {
-                const extension = path.extname(links)
-                const fileName = path.basename(links, extension)
-                for (const size of sizes) {
-                    const image = await sharp(links).resize(size.width, size.height, {
-                        kernel: sharp.kernel.nearest,
-                        fit: 'cover',
-                        position: 'center',
-                        background: {r: 255, g: 255, b: 255, alpha: 0.5}
-                    });
-                    await fsPromises.writeFile(`${outputDir}/${fileName}_${size.width}_${size.height}_pixels${extension}`, image);
-                    console.log(`${fileName}_${size.width}_${size.height}_pixels${extension} created successfully`);
-                }
-            }
-        }
-    } catch (error) {
-        console.log(error)
+// const resizeImageWithParams = async (
+//   links: string | string[],
+//   outputDir: string
+// ) => {
+//   try {
+//     const sizes: { width: number; height: number }[] = [
+//       { width: 150, height: 150 },
+//       {
+//         width: 250,
+//         height: 250
+//       },
+//       { width: 300, height: 300 },
+//       { width: 600, height: 600 },
+//       { width: 1024, height: 1024 }
+//     ];
+//     //check if output directory exist already
+//     if (!fs.existsSync(outputDir)) {
+//       fs.mkdirSync(outputDir);
+//     }
+//     //process array of files/images
+//     if (typeof links !== 'string' && links.length > 0) {
+//       for (let i = 0; i < links.length; i++) {
+//         const extension = path.extname(links[i]);
+//         const fileName = path.basename(links[i], extension);
+//         for (const size of sizes) {
+//           const image = await sharp(links[i]).resize(size.width, size.height, {
+//             kernel: sharp.kernel.nearest,
+//             fit: 'cover',
+//             position: 'center',
+//             background: { r: 255, g: 255, b: 255, alpha: 0.5 }
+//           });
+//           await fsPromises.writeFile(
+//             `${outputDir}/${fileName}_${size.width}_${size.height}_pixels${extension}`,
+//             image
+//           );
+//           console.log(
+//             `${fileName}_${size.width}_${size.height}_pixels${extension} created successfully`
+//           );
+//         }
+//       }
+//     } else {
+//       //process single file/image
+//       if (typeof links === 'string') {
+//         const extension = path.extname(links);
+//         const fileName = path.basename(links, extension);
+//         for (const size of sizes) {
+//           const image = await sharp(links).resize(size.width, size.height, {
+//             kernel: sharp.kernel.nearest,
+//             fit: 'cover',
+//             position: 'center',
+//             background: { r: 255, g: 255, b: 255, alpha: 0.5 }
+//           });
+//           await fsPromises.writeFile(
+//             `${outputDir}/${fileName}_${size.width}_${size.height}_pixels${extension}`,
+//             image
+//           );
+//           console.log(
+//             `${fileName}_${size.width}_${size.height}_pixels${extension} created successfully`
+//           );
+//         }
+//       }
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+const resizeImageWithQuery = async (
+  filename: string,
+  width: number,
+  height: number
+) => {
+  try {
+    const baseUrl: string = path.resolve('src');
+    const inputDir: string = path.resolve(baseUrl, 'assets', 'originals');
+    const outputDir: string = path.resolve(baseUrl, 'assets', 'processed');
+    const filePath = path.resolve(baseUrl, inputDir, filename);
+    const extension = path.extname(filePath);
+    const name = path.basename(filePath, extension);
+    //check if output directory exist already
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir);
     }
+
+    if (!width || !height) {
+      console.log(
+        'Error! Invalid input for height or width e.g. height=a, height=0, height=500f or height=-1.'
+      );
+    } else if (!filename || !fs.existsSync(filePath)) {
+      console.log('Error! Invalid filename! Path to file not available ');
+    } else if (
+      fs.existsSync(
+        `${outputDir}/${name}_${width}_${height}_pixels${extension}`
+      )
+    ) {
+      console.log(
+        `${outputDir}/${name}_${width}_${height}_pixels${extension} already exist`
+      );
+
+      return {
+        filename,
+        width,
+        height
+      };
+    }
+    //process single file/image
+    else if (
+      (filePath || fs.existsSync(filePath)) &&
+      !fs.existsSync(
+        `${outputDir}/${name}_${width}_${height}_pixels${extension}`
+      )
+    ) {
+      const image = await sharp(filePath).resize(width, height, {
+        kernel: sharp.kernel.nearest,
+        fit: 'cover',
+        position: 'center',
+        background: { r: 255, g: 255, b: 255, alpha: 0.5 }
+      });
+      await fsPromises.writeFile(
+        `${outputDir}/${name}_${width}_${height}_pixels${extension}`,
+        image
+      );
+      console.log(
+        `${name}_${width}_${height}_pixels${extension} created successfully`
+      );
+      return {
+        filename,
+        width,
+        height
+      };
+    } else {
+      console.log('Error! An error occurred! Please try again');
+    }
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
 };
-
-
-const resizeImageWithQuery = (req: express.Request, res: express.Response, next: Function) => {
-        try {
-            const baseUrl: string = path.resolve('src')
-            const outputDir: string = path.resolve(baseUrl, 'assets', 'processed')
-            if (Object.entries(req.query).length > 0 && !!req.query.filename && !!req.query.width && !!req.query.height) {
-                const filename: string = req.query.filename as string
-                const width: number = parseInt(<string>req.query.width)
-                const height: number = parseInt(<string>req.query.height)
-                const extension = path.extname(filename)
-                const name = path.basename(filename, extension)
-                //check if output directory exist already
-                if (!fs.existsSync(outputDir)) {
-                    fs.mkdirSync(outputDir);
-                }
-
-                //process single file/image
-                if ((typeof filename === "string") && (name === path.basename(filename))) {
-
-                    const image = sharp(filename).resize(width, height, {
-                        kernel: sharp.kernel.nearest,
-                        fit: 'cover',
-                        position: 'center',
-                        background: {r: 255, g: 255, b: 255, alpha: 0.5}
-                    });
-                    fsPromises.writeFile(`${outputDir}/${name}_${width}_${height}_pixels${extension}`, image);
-                    console.log(`${name}_${width}_${height}_pixels${extension} created successfully`);
-                } else {
-                    console.error('filename should be a valid file path')
-                }
-            } else {
-                console.error('filename, height and width must be passed to request query.')
-            }
-        } catch (error) {
-            console.error(error)
-        }
-    }
-;
-
 export default {
-    resizeImageWithQuery,
-}
+  resizeImageWithQuery
+};
