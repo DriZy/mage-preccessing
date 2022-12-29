@@ -22,8 +22,8 @@ routes.get(
         filename,
         width,
         height
-      );
-      res.send(response);
+      ) as string;
+      res.sendFile(response);
     } else {
       res.send('Error! Missing filename, height or width');
     }

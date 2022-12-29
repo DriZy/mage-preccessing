@@ -9,6 +9,9 @@ import path from 'path';
  * @param width
  * @param heigh
  **/
+
+
+
 const resizeImageWithQuery = async (
   filename: string,
   width: number,
@@ -84,6 +87,8 @@ const resizeImageWithQuery = async (
     return error;
   }
 };
+
+
 export default {
-  resizeImageWithQuery
+  resizeImageWithQuery,
 };
