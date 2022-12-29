@@ -1,5 +1,6 @@
 import express from 'express';
 import resize from '../controllers/resize';
+import path from "path";
 
 const routes = express.Router();
 
@@ -23,7 +24,12 @@ routes.get(
         width,
         height
       ) as string;
-      res.sendFile(response);
+
+      if (path.extname(response)){
+            res.sendFile(response);
+        }else {
+          res.send(response)
+      }
     } else {
       res.send('Error! Missing filename, height or width');
     }

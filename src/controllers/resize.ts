@@ -43,7 +43,7 @@ const resizeImageWithQuery = async (
     //check filename and absolute file path
     else if (!filename || !fs.existsSync(filePath)) {
       console.log('Error! Invalid filename! Path to file not available ');
-      return 'Error! Invalid filename! Path to file not available ';
+      return 'Error! Invalid filename! Path to file not available';
     }
     //check if file width same width and height has been processed before
     else if (
@@ -87,6 +87,7 @@ const resizeImageWithQuery = async (
     return error;
   }
 };
+
 
 
 export default {
